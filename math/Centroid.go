@@ -3,7 +3,6 @@ package math
 import "log"
 
 func Centroid(points [][]float64) []float64 {
-
 	dim := len(points[0])
 	result := make([]float64, dim)
 
@@ -22,5 +21,4 @@ func Centroid(points [][]float64) []float64 {
 	}
 
 	return result
-
 }
