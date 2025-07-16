@@ -1,3 +1,4 @@
 .vscode
 cmd/nevermind.go
 file101
+.env
