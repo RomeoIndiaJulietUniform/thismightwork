@@ -1,8 +1,12 @@
 package db
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
-func newSession(backend, data string) KVStore {
+func NewSession(backend, data string) KVStore {
+	fmt.Printf("Any Station: %v %v", backend, data)
 	switch backend {
 	case "rocksdb":
 		db, err := RocksDB(data)
