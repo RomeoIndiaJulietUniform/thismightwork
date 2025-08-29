@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package seirraromeo.v1;
+
+option go_package = "github.com/RomeoIndiaJulietUniform/thismightwork/api/pb;pb";
+
+message BulkInsertResponse {
+  bool success = 1;
+  int32 inserted_count = 2;
+}

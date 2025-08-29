@@ -19,141 +19,367 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IndexSearchService_Insert_FullMethodName = "/seirraromeo.IndexSearchService/Insert"
-	IndexSearchService_Search_FullMethodName = "/seirraromeo.IndexSearchService/Search"
+	SeirraRomeo_Insert_FullMethodName           = "/seirraromeo.v1.SeirraRomeo/Insert"
+	SeirraRomeo_Upsert_FullMethodName           = "/seirraromeo.v1.SeirraRomeo/Upsert"
+	SeirraRomeo_Update_FullMethodName           = "/seirraromeo.v1.SeirraRomeo/Update"
+	SeirraRomeo_Delete_FullMethodName           = "/seirraromeo.v1.SeirraRomeo/Delete"
+	SeirraRomeo_BulkInsert_FullMethodName       = "/seirraromeo.v1.SeirraRomeo/BulkInsert"
+	SeirraRomeo_CreateCollection_FullMethodName = "/seirraromeo.v1.SeirraRomeo/CreateCollection"
+	SeirraRomeo_DropCollection_FullMethodName   = "/seirraromeo.v1.SeirraRomeo/DropCollection"
+	SeirraRomeo_ListCollections_FullMethodName  = "/seirraromeo.v1.SeirraRomeo/ListCollections"
 )
 
-// IndexSearchServiceClient is the client API for IndexSearchService service.
+// SeirraRomeoClient is the client API for SeirraRomeo service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type IndexSearchServiceClient interface {
+type SeirraRomeoClient interface {
+	// ---------- Vector APIs ----------
 	Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error)
-	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
+	Upsert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	BulkInsert(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[InsertRequest, BulkInsertResponse], error)
+	// ---------- Collection APIs ----------
+	CreateCollection(ctx context.Context, in *CreateCollectionRequest, opts ...grpc.CallOption) (*CollectionResponse, error)
+	DropCollection(ctx context.Context, in *DropCollectionRequest, opts ...grpc.CallOption) (*CollectionResponse, error)
+	ListCollections(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error)
 }
 
-type indexSearchServiceClient struct {
+type seirraRomeoClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewIndexSearchServiceClient(cc grpc.ClientConnInterface) IndexSearchServiceClient {
-	return &indexSearchServiceClient{cc}
+func NewSeirraRomeoClient(cc grpc.ClientConnInterface) SeirraRomeoClient {
+	return &seirraRomeoClient{cc}
 }
 
-func (c *indexSearchServiceClient) Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error) {
+func (c *seirraRomeoClient) Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InsertResponse)
-	err := c.cc.Invoke(ctx, IndexSearchService_Insert_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SeirraRomeo_Insert_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *indexSearchServiceClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error) {
+func (c *seirraRomeoClient) Upsert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*InsertResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SearchResponse)
-	err := c.cc.Invoke(ctx, IndexSearchService_Search_FullMethodName, in, out, cOpts...)
+	out := new(InsertResponse)
+	err := c.cc.Invoke(ctx, SeirraRomeo_Upsert_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// IndexSearchServiceServer is the server API for IndexSearchService service.
-// All implementations must embed UnimplementedIndexSearchServiceServer
-// for forward compatibility.
-type IndexSearchServiceServer interface {
-	Insert(context.Context, *InsertRequest) (*InsertResponse, error)
-	Search(context.Context, *SearchRequest) (*SearchResponse, error)
-	mustEmbedUnimplementedIndexSearchServiceServer()
+func (c *seirraRomeoClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateResponse)
+	err := c.cc.Invoke(ctx, SeirraRomeo_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
-// UnimplementedIndexSearchServiceServer must be embedded to have
+func (c *seirraRomeoClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteResponse)
+	err := c.cc.Invoke(ctx, SeirraRomeo_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seirraRomeoClient) BulkInsert(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[InsertRequest, BulkInsertResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &SeirraRomeo_ServiceDesc.Streams[0], SeirraRomeo_BulkInsert_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[InsertRequest, BulkInsertResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SeirraRomeo_BulkInsertClient = grpc.ClientStreamingClient[InsertRequest, BulkInsertResponse]
+
+func (c *seirraRomeoClient) CreateCollection(ctx context.Context, in *CreateCollectionRequest, opts ...grpc.CallOption) (*CollectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CollectionResponse)
+	err := c.cc.Invoke(ctx, SeirraRomeo_CreateCollection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seirraRomeoClient) DropCollection(ctx context.Context, in *DropCollectionRequest, opts ...grpc.CallOption) (*CollectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CollectionResponse)
+	err := c.cc.Invoke(ctx, SeirraRomeo_DropCollection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seirraRomeoClient) ListCollections(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCollectionsResponse)
+	err := c.cc.Invoke(ctx, SeirraRomeo_ListCollections_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SeirraRomeoServer is the server API for SeirraRomeo service.
+// All implementations must embed UnimplementedSeirraRomeoServer
+// for forward compatibility.
+type SeirraRomeoServer interface {
+	// ---------- Vector APIs ----------
+	Insert(context.Context, *InsertRequest) (*InsertResponse, error)
+	Upsert(context.Context, *InsertRequest) (*InsertResponse, error)
+	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
+	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	BulkInsert(grpc.ClientStreamingServer[InsertRequest, BulkInsertResponse]) error
+	// ---------- Collection APIs ----------
+	CreateCollection(context.Context, *CreateCollectionRequest) (*CollectionResponse, error)
+	DropCollection(context.Context, *DropCollectionRequest) (*CollectionResponse, error)
+	ListCollections(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error)
+	mustEmbedUnimplementedSeirraRomeoServer()
+}
+
+// UnimplementedSeirraRomeoServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedIndexSearchServiceServer struct{}
+type UnimplementedSeirraRomeoServer struct{}
 
-func (UnimplementedIndexSearchServiceServer) Insert(context.Context, *InsertRequest) (*InsertResponse, error) {
+func (UnimplementedSeirraRomeoServer) Insert(context.Context, *InsertRequest) (*InsertResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Insert not implemented")
 }
-func (UnimplementedIndexSearchServiceServer) Search(context.Context, *SearchRequest) (*SearchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+func (UnimplementedSeirraRomeoServer) Upsert(context.Context, *InsertRequest) (*InsertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Upsert not implemented")
 }
-func (UnimplementedIndexSearchServiceServer) mustEmbedUnimplementedIndexSearchServiceServer() {}
-func (UnimplementedIndexSearchServiceServer) testEmbeddedByValue()                            {}
+func (UnimplementedSeirraRomeoServer) Update(context.Context, *UpdateRequest) (*UpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedSeirraRomeoServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedSeirraRomeoServer) BulkInsert(grpc.ClientStreamingServer[InsertRequest, BulkInsertResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method BulkInsert not implemented")
+}
+func (UnimplementedSeirraRomeoServer) CreateCollection(context.Context, *CreateCollectionRequest) (*CollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCollection not implemented")
+}
+func (UnimplementedSeirraRomeoServer) DropCollection(context.Context, *DropCollectionRequest) (*CollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DropCollection not implemented")
+}
+func (UnimplementedSeirraRomeoServer) ListCollections(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCollections not implemented")
+}
+func (UnimplementedSeirraRomeoServer) mustEmbedUnimplementedSeirraRomeoServer() {}
+func (UnimplementedSeirraRomeoServer) testEmbeddedByValue()                     {}
 
-// UnsafeIndexSearchServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to IndexSearchServiceServer will
+// UnsafeSeirraRomeoServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SeirraRomeoServer will
 // result in compilation errors.
-type UnsafeIndexSearchServiceServer interface {
-	mustEmbedUnimplementedIndexSearchServiceServer()
+type UnsafeSeirraRomeoServer interface {
+	mustEmbedUnimplementedSeirraRomeoServer()
 }
 
-func RegisterIndexSearchServiceServer(s grpc.ServiceRegistrar, srv IndexSearchServiceServer) {
-	// If the following call pancis, it indicates UnimplementedIndexSearchServiceServer was
+func RegisterSeirraRomeoServer(s grpc.ServiceRegistrar, srv SeirraRomeoServer) {
+	// If the following call pancis, it indicates UnimplementedSeirraRomeoServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&IndexSearchService_ServiceDesc, srv)
+	s.RegisterService(&SeirraRomeo_ServiceDesc, srv)
 }
 
-func _IndexSearchService_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SeirraRomeo_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InsertRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IndexSearchServiceServer).Insert(ctx, in)
+		return srv.(SeirraRomeoServer).Insert(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IndexSearchService_Insert_FullMethodName,
+		FullMethod: SeirraRomeo_Insert_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IndexSearchServiceServer).Insert(ctx, req.(*InsertRequest))
+		return srv.(SeirraRomeoServer).Insert(ctx, req.(*InsertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IndexSearchService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchRequest)
+func _SeirraRomeo_Upsert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InsertRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IndexSearchServiceServer).Search(ctx, in)
+		return srv.(SeirraRomeoServer).Upsert(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IndexSearchService_Search_FullMethodName,
+		FullMethod: SeirraRomeo_Upsert_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IndexSearchServiceServer).Search(ctx, req.(*SearchRequest))
+		return srv.(SeirraRomeoServer).Upsert(ctx, req.(*InsertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// IndexSearchService_ServiceDesc is the grpc.ServiceDesc for IndexSearchService service.
+func _SeirraRomeo_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeirraRomeoServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeirraRomeo_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeirraRomeoServer).Update(ctx, req.(*UpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeirraRomeo_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeirraRomeoServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeirraRomeo_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeirraRomeoServer).Delete(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeirraRomeo_BulkInsert_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SeirraRomeoServer).BulkInsert(&grpc.GenericServerStream[InsertRequest, BulkInsertResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SeirraRomeo_BulkInsertServer = grpc.ClientStreamingServer[InsertRequest, BulkInsertResponse]
+
+func _SeirraRomeo_CreateCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeirraRomeoServer).CreateCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeirraRomeo_CreateCollection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeirraRomeoServer).CreateCollection(ctx, req.(*CreateCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeirraRomeo_DropCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DropCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeirraRomeoServer).DropCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeirraRomeo_DropCollection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeirraRomeoServer).DropCollection(ctx, req.(*DropCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeirraRomeo_ListCollections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCollectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeirraRomeoServer).ListCollections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeirraRomeo_ListCollections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeirraRomeoServer).ListCollections(ctx, req.(*ListCollectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SeirraRomeo_ServiceDesc is the grpc.ServiceDesc for SeirraRomeo service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var IndexSearchService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "seirraromeo.IndexSearchService",
-	HandlerType: (*IndexSearchServiceServer)(nil),
+var SeirraRomeo_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "seirraromeo.v1.SeirraRomeo",
+	HandlerType: (*SeirraRomeoServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Insert",
-			Handler:    _IndexSearchService_Insert_Handler,
+			Handler:    _SeirraRomeo_Insert_Handler,
 		},
 		{
-			MethodName: "Search",
-			Handler:    _IndexSearchService_Search_Handler,
+			MethodName: "Upsert",
+			Handler:    _SeirraRomeo_Upsert_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _SeirraRomeo_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _SeirraRomeo_Delete_Handler,
+		},
+		{
+			MethodName: "CreateCollection",
+			Handler:    _SeirraRomeo_CreateCollection_Handler,
+		},
+		{
+			MethodName: "DropCollection",
+			Handler:    _SeirraRomeo_DropCollection_Handler,
+		},
+		{
+			MethodName: "ListCollections",
+			Handler:    _SeirraRomeo_ListCollections_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "BulkInsert",
+			Handler:       _SeirraRomeo_BulkInsert_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "seirraromeo.proto",
 }

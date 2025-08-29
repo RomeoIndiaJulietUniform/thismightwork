@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package seirraromeo.v1;
+
+option go_package = "github.com/RomeoIndiaJulietUniform/thismightwork/api/pb;pb";
+
+message UpdateRequest {
+  string collection = 1;
+  string id = 2;
+  repeated float values = 3;
+  map<string, string> metadata = 4;
+}
+
+message UpdateResponse {
+  bool success = 1;
+  string message = 2;
+}

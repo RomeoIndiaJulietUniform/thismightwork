@@ -1,27 +1,27 @@
 syntax = "proto3";
 
-package seirraromeo;
+package seirraromeo.v1;
+
+import "insert.proto";
+import "update.proto";
+import "delete.proto";
+import "bulk_insert.proto";
+import "collection.proto";
+
 option go_package = "github.com/RomeoIndiaJulietUniform/thismightwork/api/pb;pb";
+option java_package = "io.seirraromeo.client.grpc.protocol.v1";
+option java_outer_classname = "SeirraRomeoProto";
 
-service IndexSearchService {
-  rpc Insert(InsertRequest) returns (InsertResponse);
-  rpc Search(SearchRequest) returns (SearchResponse);
-}
+service SeirraRomeo {
+  // ---------- Vector APIs ----------
+  rpc Insert(InsertRequest) returns (InsertResponse) {};
+  rpc Upsert(InsertRequest) returns (InsertResponse) {};
+  rpc Update(UpdateRequest) returns (UpdateResponse) {};
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {};
+  rpc BulkInsert(stream InsertRequest) returns (BulkInsertResponse) {};
 
-message InsertRequest {
-  string id = 1;
-  repeated float vector = 2;
-}
-
-message InsertResponse {
-  bool success = 1;
-}
-
-message SearchRequest {
-  repeated float vector = 1;
-  int32 top_k = 2;
-}
-
-message SearchResponse {
-  repeated string ids = 1;
+  // ---------- Collection APIs ----------
+  rpc CreateCollection(CreateCollectionRequest) returns (CollectionResponse) {};
+  rpc DropCollection(DropCollectionRequest) returns (CollectionResponse) {};
+  rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse) {};
 }

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package seirraromeo.v1;
+
+option go_package = "github.com/RomeoIndiaJulietUniform/thismightwork/api/pb;pb";
+
+message DeleteRequest {
+  string collection = 1;
+  repeated string ids = 2;
+  string filter = 3;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  int32 deleted_count = 2;
+}

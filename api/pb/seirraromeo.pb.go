@@ -10,7 +10,6 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -21,246 +20,59 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type InsertRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Vector        []float32              `protobuf:"fixed32,2,rep,packed,name=vector,proto3" json:"vector,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *InsertRequest) Reset() {
-	*x = InsertRequest{}
-	mi := &file_seirraromeo_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InsertRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InsertRequest) ProtoMessage() {}
-
-func (x *InsertRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_seirraromeo_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InsertRequest.ProtoReflect.Descriptor instead.
-func (*InsertRequest) Descriptor() ([]byte, []int) {
-	return file_seirraromeo_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *InsertRequest) GetId() string {
-	if x != nil {
-		return x.Id
-	}
-	return ""
-}
-
-func (x *InsertRequest) GetVector() []float32 {
-	if x != nil {
-		return x.Vector
-	}
-	return nil
-}
-
-type InsertResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *InsertResponse) Reset() {
-	*x = InsertResponse{}
-	mi := &file_seirraromeo_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InsertResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InsertResponse) ProtoMessage() {}
-
-func (x *InsertResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_seirraromeo_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InsertResponse.ProtoReflect.Descriptor instead.
-func (*InsertResponse) Descriptor() ([]byte, []int) {
-	return file_seirraromeo_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *InsertResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
-type SearchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Vector        []float32              `protobuf:"fixed32,1,rep,packed,name=vector,proto3" json:"vector,omitempty"`
-	TopK          int32                  `protobuf:"varint,2,opt,name=top_k,json=topK,proto3" json:"top_k,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SearchRequest) Reset() {
-	*x = SearchRequest{}
-	mi := &file_seirraromeo_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SearchRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SearchRequest) ProtoMessage() {}
-
-func (x *SearchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_seirraromeo_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SearchRequest.ProtoReflect.Descriptor instead.
-func (*SearchRequest) Descriptor() ([]byte, []int) {
-	return file_seirraromeo_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *SearchRequest) GetVector() []float32 {
-	if x != nil {
-		return x.Vector
-	}
-	return nil
-}
-
-func (x *SearchRequest) GetTopK() int32 {
-	if x != nil {
-		return x.TopK
-	}
-	return 0
-}
-
-type SearchResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ids           []string               `protobuf:"bytes,1,rep,name=ids,proto3" json:"ids,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SearchResponse) Reset() {
-	*x = SearchResponse{}
-	mi := &file_seirraromeo_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SearchResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SearchResponse) ProtoMessage() {}
-
-func (x *SearchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_seirraromeo_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SearchResponse.ProtoReflect.Descriptor instead.
-func (*SearchResponse) Descriptor() ([]byte, []int) {
-	return file_seirraromeo_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *SearchResponse) GetIds() []string {
-	if x != nil {
-		return x.Ids
-	}
-	return nil
-}
-
 var File_seirraromeo_proto protoreflect.FileDescriptor
 
 const file_seirraromeo_proto_rawDesc = "" +
 	"\n" +
-	"\x11seirraromeo.proto\x12\vseirraromeo\"7\n" +
-	"\rInsertRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
-	"\x06vector\x18\x02 \x03(\x02R\x06vector\"*\n" +
-	"\x0eInsertResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"<\n" +
-	"\rSearchRequest\x12\x16\n" +
-	"\x06vector\x18\x01 \x03(\x02R\x06vector\x12\x13\n" +
-	"\x05top_k\x18\x02 \x01(\x05R\x04topK\"\"\n" +
-	"\x0eSearchResponse\x12\x10\n" +
-	"\x03ids\x18\x01 \x03(\tR\x03ids2\x9a\x01\n" +
-	"\x12IndexSearchService\x12A\n" +
-	"\x06Insert\x12\x1a.seirraromeo.InsertRequest\x1a\x1b.seirraromeo.InsertResponse\x12A\n" +
-	"\x06Search\x12\x1a.seirraromeo.SearchRequest\x1a\x1b.seirraromeo.SearchResponseB<Z:github.com/RomeoIndiaJulietUniform/thismightwork/api/pb;pbb\x06proto3"
+	"\x11seirraromeo.proto\x12\x0eseirraromeo.v1\x1a\finsert.proto\x1a\fupdate.proto\x1a\fdelete.proto\x1a\x11bulk_insert.proto\x1a\x10collection.proto2\xb6\x05\n" +
+	"\vSeirraRomeo\x12I\n" +
+	"\x06Insert\x12\x1d.seirraromeo.v1.InsertRequest\x1a\x1e.seirraromeo.v1.InsertResponse\"\x00\x12I\n" +
+	"\x06Upsert\x12\x1d.seirraromeo.v1.InsertRequest\x1a\x1e.seirraromeo.v1.InsertResponse\"\x00\x12I\n" +
+	"\x06Update\x12\x1d.seirraromeo.v1.UpdateRequest\x1a\x1e.seirraromeo.v1.UpdateResponse\"\x00\x12I\n" +
+	"\x06Delete\x12\x1d.seirraromeo.v1.DeleteRequest\x1a\x1e.seirraromeo.v1.DeleteResponse\"\x00\x12S\n" +
+	"\n" +
+	"BulkInsert\x12\x1d.seirraromeo.v1.InsertRequest\x1a\".seirraromeo.v1.BulkInsertResponse\"\x00(\x01\x12a\n" +
+	"\x10CreateCollection\x12'.seirraromeo.v1.CreateCollectionRequest\x1a\".seirraromeo.v1.CollectionResponse\"\x00\x12]\n" +
+	"\x0eDropCollection\x12%.seirraromeo.v1.DropCollectionRequest\x1a\".seirraromeo.v1.CollectionResponse\"\x00\x12d\n" +
+	"\x0fListCollections\x12&.seirraromeo.v1.ListCollectionsRequest\x1a'.seirraromeo.v1.ListCollectionsResponse\"\x00Bv\n" +
+	"&io.seirraromeo.client.grpc.protocol.v1B\x10SeirraRomeoProtoZ:github.com/RomeoIndiaJulietUniform/thismightwork/api/pb;pbb\x06proto3"
 
-var (
-	file_seirraromeo_proto_rawDescOnce sync.Once
-	file_seirraromeo_proto_rawDescData []byte
-)
-
-func file_seirraromeo_proto_rawDescGZIP() []byte {
-	file_seirraromeo_proto_rawDescOnce.Do(func() {
-		file_seirraromeo_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_seirraromeo_proto_rawDesc), len(file_seirraromeo_proto_rawDesc)))
-	})
-	return file_seirraromeo_proto_rawDescData
-}
-
-var file_seirraromeo_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_seirraromeo_proto_goTypes = []any{
-	(*InsertRequest)(nil),  // 0: seirraromeo.InsertRequest
-	(*InsertResponse)(nil), // 1: seirraromeo.InsertResponse
-	(*SearchRequest)(nil),  // 2: seirraromeo.SearchRequest
-	(*SearchResponse)(nil), // 3: seirraromeo.SearchResponse
+	(*InsertRequest)(nil),           // 0: seirraromeo.v1.InsertRequest
+	(*UpdateRequest)(nil),           // 1: seirraromeo.v1.UpdateRequest
+	(*DeleteRequest)(nil),           // 2: seirraromeo.v1.DeleteRequest
+	(*CreateCollectionRequest)(nil), // 3: seirraromeo.v1.CreateCollectionRequest
+	(*DropCollectionRequest)(nil),   // 4: seirraromeo.v1.DropCollectionRequest
+	(*ListCollectionsRequest)(nil),  // 5: seirraromeo.v1.ListCollectionsRequest
+	(*InsertResponse)(nil),          // 6: seirraromeo.v1.InsertResponse
+	(*UpdateResponse)(nil),          // 7: seirraromeo.v1.UpdateResponse
+	(*DeleteResponse)(nil),          // 8: seirraromeo.v1.DeleteResponse
+	(*BulkInsertResponse)(nil),      // 9: seirraromeo.v1.BulkInsertResponse
+	(*CollectionResponse)(nil),      // 10: seirraromeo.v1.CollectionResponse
+	(*ListCollectionsResponse)(nil), // 11: seirraromeo.v1.ListCollectionsResponse
 }
 var file_seirraromeo_proto_depIdxs = []int32{
-	0, // 0: seirraromeo.IndexSearchService.Insert:input_type -> seirraromeo.InsertRequest
-	2, // 1: seirraromeo.IndexSearchService.Search:input_type -> seirraromeo.SearchRequest
-	1, // 2: seirraromeo.IndexSearchService.Insert:output_type -> seirraromeo.InsertResponse
-	3, // 3: seirraromeo.IndexSearchService.Search:output_type -> seirraromeo.SearchResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: seirraromeo.v1.SeirraRomeo.Insert:input_type -> seirraromeo.v1.InsertRequest
+	0,  // 1: seirraromeo.v1.SeirraRomeo.Upsert:input_type -> seirraromeo.v1.InsertRequest
+	1,  // 2: seirraromeo.v1.SeirraRomeo.Update:input_type -> seirraromeo.v1.UpdateRequest
+	2,  // 3: seirraromeo.v1.SeirraRomeo.Delete:input_type -> seirraromeo.v1.DeleteRequest
+	0,  // 4: seirraromeo.v1.SeirraRomeo.BulkInsert:input_type -> seirraromeo.v1.InsertRequest
+	3,  // 5: seirraromeo.v1.SeirraRomeo.CreateCollection:input_type -> seirraromeo.v1.CreateCollectionRequest
+	4,  // 6: seirraromeo.v1.SeirraRomeo.DropCollection:input_type -> seirraromeo.v1.DropCollectionRequest
+	5,  // 7: seirraromeo.v1.SeirraRomeo.ListCollections:input_type -> seirraromeo.v1.ListCollectionsRequest
+	6,  // 8: seirraromeo.v1.SeirraRomeo.Insert:output_type -> seirraromeo.v1.InsertResponse
+	6,  // 9: seirraromeo.v1.SeirraRomeo.Upsert:output_type -> seirraromeo.v1.InsertResponse
+	7,  // 10: seirraromeo.v1.SeirraRomeo.Update:output_type -> seirraromeo.v1.UpdateResponse
+	8,  // 11: seirraromeo.v1.SeirraRomeo.Delete:output_type -> seirraromeo.v1.DeleteResponse
+	9,  // 12: seirraromeo.v1.SeirraRomeo.BulkInsert:output_type -> seirraromeo.v1.BulkInsertResponse
+	10, // 13: seirraromeo.v1.SeirraRomeo.CreateCollection:output_type -> seirraromeo.v1.CollectionResponse
+	10, // 14: seirraromeo.v1.SeirraRomeo.DropCollection:output_type -> seirraromeo.v1.CollectionResponse
+	11, // 15: seirraromeo.v1.SeirraRomeo.ListCollections:output_type -> seirraromeo.v1.ListCollectionsResponse
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_seirraromeo_proto_init() }
@@ -268,19 +80,23 @@ func file_seirraromeo_proto_init() {
 	if File_seirraromeo_proto != nil {
 		return
 	}
+	file_insert_proto_init()
+	file_update_proto_init()
+	file_delete_proto_init()
+	file_bulk_insert_proto_init()
+	file_collection_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_seirraromeo_proto_rawDesc), len(file_seirraromeo_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_seirraromeo_proto_goTypes,
 		DependencyIndexes: file_seirraromeo_proto_depIdxs,
-		MessageInfos:      file_seirraromeo_proto_msgTypes,
 	}.Build()
 	File_seirraromeo_proto = out.File
 	file_seirraromeo_proto_goTypes = nil
