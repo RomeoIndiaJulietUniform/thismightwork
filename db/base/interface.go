@@ -1,4 +1,4 @@
-package db
+package base
 
 type KVStore interface {
 	Put(key, value []byte) error

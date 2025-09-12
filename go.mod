@@ -4,7 +4,6 @@ go 1.24.4
 
 require (
 	github.com/dgraph-io/badger v1.6.2
-	github.com/linxGnu/grocksdb v1.10.1
 	google.golang.org/grpc v1.75.0
 	google.golang.org/protobuf v1.36.8
 )
@@ -16,6 +15,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
