@@ -11,15 +11,21 @@ import (
 
 type DataService struct {
 	pb.UnimplementedSeirraRomeoServer
-	rawStore  *db.RawVectorStore
-	hnswStore *db.HNSWStore
+	rawStore    *db.RawVectorStore
+	hnswStore   *db.HNSWStore
+	hnswService *HNSWService
 }
 
-func NewDataService(dbPath string) *DataService {
+func NewDataService(dbPath string, M, EF, EFConstruction int) *DataService {
 	badger := base.BadgerDB(dbPath)
+
+	rawStore := &db.RawVectorStore{Badger: badger}
+	hnswService := NewHNSWService(rawStore, M, EF, EFConstruction)
+
 	return &DataService{
-		rawStore:  &db.RawVectorStore{Badger: badger},
-		hnswStore: &db.HNSWStore{Badger: badger},
+		rawStore:    rawStore,
+		hnswStore:   &db.HNSWStore{Badger: badger},
+		hnswService: hnswService,
 	}
 }
 
@@ -34,11 +40,19 @@ func (s *DataService) Insert(ctx context.Context, req *pb.InsertRequest) (*pb.In
 		return &pb.InsertResponse{Success: false, Message: "raw insert failed"}, err
 	}
 
+	vector64 := make([]float64, len(req.Vector.Values))
+	for i, v := range req.Vector.Values {
+		vector64[i] = float64(v)
+	}
+
+	node := s.hnswService.AddToIndex(req.Vector.Id, vector64)
+
 	hnsw := &db.HNSWVector{
 		ID:         req.Vector.Id,
-		Level:      0,
-		Neighbours: []string{},
+		Level:      node.Level,
+		Neighbours: s.hnswService.GetNeighborIDs(node),
 	}
+
 	if err := s.hnswStore.PutVector(hnsw); err != nil {
 		log.Println("failed to insert hnsw vector:", err)
 		return &pb.InsertResponse{Success: false, Message: "hnsw insert failed"}, err

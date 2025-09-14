@@ -2,12 +2,14 @@ package index
 
 import (
 	"container/heap"
-	"math"
 	"math/rand"
 	"sort"
+
+	"github.com/RomeoIndiaJulietUniform/thismightwork/math"
 )
 
 type Node struct {
+	ID        string
 	Vector    []float64
 	Level     int
 	Neighbors [][]*Node
@@ -38,6 +40,8 @@ type HNSW struct {
 	EFConstruction int
 	Layers         [][]*Node
 	Nodes          []*Node
+	EntryPoint     *Node
+	MaxLevel       int
 }
 
 func NewHNSW(M, EF, EFConstruction int) *HNSW {
@@ -50,15 +54,6 @@ func NewHNSW(M, EF, EFConstruction int) *HNSW {
 	}
 }
 
-func distance(a, b []float64) float64 {
-	sum := 0.0
-	for i := range a {
-		diff := a[i] - b[i]
-		sum += diff * diff
-	}
-	return math.Sqrt(sum)
-}
-
 func randomLevel(maxLevel int) int {
 	level := 0
 	p := 0.5
@@ -68,9 +63,10 @@ func randomLevel(maxLevel int) int {
 	return level
 }
 
-func (h *HNSW) AddNode(vector []float64) {
-	level := randomLevel(5)
+func (h *HNSW) AddNode(id string, vector []float64) *Node {
+	level := randomLevel(10)
 	node := &Node{
+		ID:        id,
 		Vector:    vector,
 		Level:     level,
 		Neighbors: make([][]*Node, level+1),
@@ -82,14 +78,47 @@ func (h *HNSW) AddNode(vector []float64) {
 	}
 	h.Layers[level] = append(h.Layers[level], node)
 
-	if len(h.Nodes) == 1 {
-		return
+	if h.EntryPoint == nil {
+		h.EntryPoint = node
+		h.MaxLevel = level
+		return node
 	}
 
-	entry := h.Nodes[0]
-	for l := level; l >= 0; l-- {
-		entry = h.searchLayer(vector, entry, l, h.EFConstruction)
-		h.connectNeighbors(node, entry, l)
+	entry := h.EntryPoint
+	for l := h.MaxLevel; l > level; l-- {
+		entry = h.searchLayer(vector, entry, l, 1)
+	}
+
+	for l := min(level, h.MaxLevel); l >= 0; l-- {
+		nearest := h.searchLayer(vector, entry, l, h.EFConstruction)
+		h.connectNeighbors(node, nearest, l)
+	}
+
+	if level > h.MaxLevel {
+		h.EntryPoint = node
+		h.MaxLevel = level
+	}
+
+	return node
+}
+
+func (h *HNSW) connectNeighbors(node, entry *Node, level int) {
+	candidates := append([]*Node{}, entry.Neighbors[level]...)
+	candidates = append(candidates, entry)
+
+	sort.Slice(candidates, func(i, j int) bool {
+		return math.EuclideanDistance(candidates[i].Vector, node.Vector) <
+			math.EuclideanDistance(candidates[j].Vector, node.Vector)
+	})
+
+	limit := min(h.M, len(candidates))
+	node.Neighbors[level] = append([]*Node{}, candidates[:limit]...)
+
+	for _, neighbor := range node.Neighbors[level] {
+		neighbor.Neighbors[level] = append(neighbor.Neighbors[level], node)
+		if len(neighbor.Neighbors[level]) > h.M {
+			neighbor.Neighbors[level] = neighbor.Neighbors[level][:h.M]
+		}
 	}
 }
 
@@ -97,7 +126,7 @@ func (h *HNSW) searchLayer(query []float64, entry *Node, level, ef int) *Node {
 	visited := make(map[*Node]bool)
 	pq := &PriorityQueue{}
 	heap.Init(pq)
-	bestDist := distance(query, entry.Vector)
+	bestDist := math.EuclideanDistance(query, entry.Vector)
 	best := entry
 	heap.Push(pq, &NodeDist{Node: entry, Dist: bestDist})
 	visited[entry] = true
@@ -112,7 +141,7 @@ func (h *HNSW) searchLayer(query []float64, entry *Node, level, ef int) *Node {
 		for _, neighbor := range curr.Neighbors[level] {
 			if !visited[neighbor] {
 				visited[neighbor] = true
-				d := distance(query, neighbor.Vector)
+				d := math.EuclideanDistance(query, neighbor.Vector)
 				if d < bestDist {
 					bestDist = d
 					best = neighbor
@@ -127,43 +156,35 @@ func (h *HNSW) searchLayer(query []float64, entry *Node, level, ef int) *Node {
 	return best
 }
 
-func (h *HNSW) connectNeighbors(node, entry *Node, level int) {
-	candidates := append([]*Node{}, entry.Neighbors[level]...)
-	candidates = append(candidates, entry)
-
-	sort.Slice(candidates, func(i, j int) bool {
-		return distance(candidates[i].Vector, node.Vector) < distance(candidates[j].Vector, node.Vector)
-	})
-
-	limit := min(h.M, len(candidates))
-	node.Neighbors[level] = append([]*Node{}, candidates[:limit]...)
-
-	for _, neighbor := range node.Neighbors[level] {
-		neighbor.Neighbors[level] = append(neighbor.Neighbors[level], node)
-		if len(neighbor.Neighbors[level]) > h.M {
-			neighbor.Neighbors[level] = neighbor.Neighbors[level][:h.M]
-		}
-	}
-}
-
 func (h *HNSW) SearchKNN(query []float64, k int) [][]float64 {
 	if len(h.Nodes) == 0 {
 		return nil
 	}
 
-	entry := h.Nodes[0]
-	for l := len(h.Layers) - 1; l >= 0; l-- {
+	entry := h.EntryPoint
+
+	for l := h.MaxLevel; l >= 0; l-- {
 		entry = h.searchLayer(query, entry, l, h.EF)
 	}
 
 	pq := &PriorityQueue{}
 	heap.Init(pq)
-	heap.Push(pq, &NodeDist{Node: entry, Dist: distance(query, entry.Vector)})
+	heap.Push(pq, &NodeDist{Node: entry, Dist: math.EuclideanDistance(query, entry.Vector)})
 
 	results := make([][]float64, 0, k)
+	visited := make(map[*Node]bool)
+	visited[entry] = true
+
 	for pq.Len() > 0 && len(results) < k {
 		nd := heap.Pop(pq).(*NodeDist)
 		results = append(results, nd.Node.Vector)
+
+		for _, neighbor := range nd.Node.Neighbors[0] {
+			if !visited[neighbor] {
+				visited[neighbor] = true
+				heap.Push(pq, &NodeDist{Node: neighbor, Dist: math.EuclideanDistance(query, neighbor.Vector)})
+			}
+		}
 	}
 	return results
 }
